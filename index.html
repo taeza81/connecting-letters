@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>자음과 모음이 만나요! - 글자 풍선 팡팡</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Square+Round:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app-wrapper">
+    <!-- 16:9 태블릿 최적화 메인 게임 컨테이너 -->
+    <div id="game-container">
+      
+      <!-- 배경 애니메이션 요소 (구름, 무지개, 언덕) -->
+      <div class="sky-bg">
+        <div class="sun-character" aria-hidden="true">
+          <div class="sun-face">😊</div>
+        </div>
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+        <div class="rainbow-arc"></div>
+        <div class="hills">
+          <div class="hill hill-back"></div>
+          <div class="hill hill-front"></div>
+        </div>
+      </div>
+
+      <!-- 폭죽/파티클 캔버스 -->
+      <canvas id="fx-canvas"></canvas>
+
+      <!-- 상단 HUD (단계, 점수 프로그레스 바, 소리/도움말/전체화면/처음으로 버튼) -->
+      <header class="hud-bar">
+        <div class="hud-left">
+          <div class="stage-badge" id="stage-badge">
+            <span class="stage-icon">⭐</span>
+            <span id="stage-text">1단계</span>
+            <span class="stage-dots" id="stage-dots">
+              <span class="dot active"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </span>
+          </div>
+          <div class="speed-indicator" id="speed-indicator" title="풍선 속도">
+            🐢 천천히
+          </div>
+        </div>
+
+        <div class="hud-center">
+          <div class="score-box">
+            <div class="score-label-row">
+              <span class="score-title">🎯 단계 점수</span>
+              <span class="score-numbers"><strong id="stage-score">0</strong> / 150점</span>
+              <span class="total-score-pill">총점 <b id="total-score">0</b>점</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="score-progress-fill" style="width: 0%"></div>
+              <div class="progress-stars">
+                <span class="p-star" style="left: 20%">🎈</span>
+                <span class="p-star" style="left: 40%">🎈</span>
+                <span class="p-star" style="left: 60%">🎈</span>
+                <span class="p-star" style="left: 80%">🎈</span>
+                <span class="p-star goal" style="left: 98%">👑</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hud-right">
+          <button class="icon-btn hint-toggle-btn active" id="hint-btn" title="글자 힌트 보기/숨기기">
+            💡 <span>힌트 켜짐</span>
+          </button>
+          <button class="icon-btn sound-toggle-btn active" id="sound-btn" title="효과음 및 음성 켜기/끄기">
+            🔊 <span>소리 켜짐</span>
+          </button>
+          <button class="icon-btn fullscreen-toggle-btn" id="fullscreen-btn" title="전체화면 전환">
+            ⛶ <span>전체화면</span>
+          </button>
+          <button class="icon-btn home-btn" id="home-btn" title="처음 화면으로">
+            🏠
+          </button>
+        </div>
+      </header>
+
+      <!-- 중앙 플레이 영역 (풍선이 내려오는 하늘 공간) -->
+      <main class="play-area" id="play-area">
+
+        <!-- 오른쪽 현재 목표 글자 도우미 카드 (지적장애 학생용 시각적 단서 제공) -->
+        <aside class="target-helper-card" id="target-helper-card">
+          <div class="helper-title">🎈 목표 글자 힌트</div>
+          <div class="helper-target-char" id="helper-target-char">가</div>
+          <div class="helper-equation" id="helper-equation">
+            <span class="eq-part eq-c" id="helper-c">ㄱ</span>
+            <span class="eq-plus">+</span>
+            <span class="eq-part eq-v" id="helper-v">ㅏ</span>
+          </div>
+        </aside>
+
+        <!-- 풍선이 생성되고 내려오는 영역 -->
+        <div class="balloon-stage" id="balloon-stage"></div>
+
+        <!-- 글자 발사 투사체 레이어 -->
+        <div class="projectile-layer" id="projectile-layer"></div>
+      </main>
+
+      <!-- 하단 자음 + 모음 조합 컨트롤 데스크 -->
+      <footer class="control-dock">
+        <!-- 조합 상태 미리보기 패널 -->
+        <div class="combine-station" id="combine-station">
+          <div class="slot-box consonant-slot" id="slot-consonant">
+            <span class="slot-label">자음자</span>
+            <span class="slot-char" id="selected-consonant">?</span>
+          </div>
+          <div class="operator-symbol">+</div>
+          <div class="slot-box vowel-slot" id="slot-vowel">
+            <span class="slot-label">모음자</span>
+            <span class="slot-char" id="selected-vowel">?</span>
+          </div>
+          <div class="operator-symbol">=</div>
+          <button class="result-launch-btn" id="launch-btn" disabled>
+            <span class="result-char" id="combined-char">?</span>
+            <span class="launch-sub">터트리기! 🚀</span>
+          </button>
+          <button class="clear-selection-btn" id="clear-btn" title="다시 고르기">
+            🔄 지우기
+          </button>
+        </div>
+
+        <!-- 자음자 & 모음자 키패드 영역 -->
+        <div class="keyboards-row">
+          <!-- 자음자 선택 판 -->
+          <div class="keyboard-panel consonant-panel">
+            <div class="panel-header">
+              <span class="panel-tag c-tag">1</span>
+              <span class="panel-title">자음자를 골라요</span>
+            </div>
+            <div class="consonant-grid" id="consonant-grid">
+              <!-- JS로 ㄱ, ㄴ, ㄷ, ㄹ, ㅁ, ㅂ, ㅅ, 자, 차, 카, 타, 파, 하 (ㄱ~ㅎ) 생성 -->
+            </div>
+          </div>
+
+          <!-- 모음자 선택 판 -->
+          <div class="keyboard-panel vowel-panel">
+            <div class="panel-header">
+              <span class="panel-tag v-tag">2</span>
+              <span class="panel-title">모음자를 골라요</span>
+            </div>
+            <div class="vowel-grid" id="vowel-grid">
+              <!-- JS로 모음 버튼 생성 -->
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      <!-- 시작 화면 오버레이 -->
+      <div class="modal-overlay active" id="start-modal">
+        <div class="modal-card start-card">
+          <div class="floating-balloons-deco" aria-hidden="true">
+            <span class="deco-b b1">가</span>
+            <span class="deco-b b2">나</span>
+            <span class="deco-b b3">다</span>
+            <span class="deco-b b4">하</span>
+          </div>
+          <div class="game-subtitle">신나는 한글 놀이 웹게임</div>
+          <h1 class="game-main-title">자음과 모음이 만나요!</h1>
+          <p class="game-desc">
+            하늘에서 내려오는 <strong>"가, 나, 다, 라, 마, 바, 사, 자, 차, 카, 타, 파, 하"</strong> 풍선을 보고,<br />
+            아래의 <strong>자음자</strong>와 <strong>모음자</strong>를 합쳐서 풍선을 팡팡 터트려 보세요!
+          </p>
+
+          <div class="how-to-box">
+            <div class="step-item">
+              <div class="step-circle">1</div>
+              <div class="step-text">내려오는 <b>풍선 글자</b>를 봐요</div>
+            </div>
+            <div class="step-arrow">➡</div>
+            <div class="step-item">
+              <div class="step-circle">2</div>
+              <div class="step-text"><b>자음자</b>와 <b>모음자(ㅏ)</b>를 눌러요</div>
+            </div>
+            <div class="step-arrow">➡</div>
+            <div class="step-item">
+              <div class="step-circle">3</div>
+              <div class="step-text"><b>150점</b>을 모으면 다음 단계로! (총 5단계)</div>
+            </div>
+          </div>
+
+          <div class="start-options">
+            <label class="option-pill">
+              <input type="checkbox" id="auto-fire-check" checked />
+              <span>⚡ 자음+모음 선택 시 자동 터트리기</span>
+            </label>
+            <label class="option-pill">
+              <input type="checkbox" id="fullscreen-start-check" checked />
+              <span>⛶ 전체화면 모드로 실행 (태블릿 기본값)</span>
+            </label>
+          </div>
+
+          <button class="big-action-btn start-game-btn" id="start-game-btn">
+            🎈 게임 시작하기!
+          </button>
+        </div>
+      </div>
+
+      <!-- 단계 클리어 축하 모달 (1~4단계 성공 시) -->
+      <div class="modal-overlay" id="stage-clear-modal">
+        <div class="modal-card clear-card">
+          <div class="celebration-animals">🎉 🐻 🐰 🎉</div>
+          <div class="clear-badge" id="clear-stage-badge">1단계 성공!</div>
+          <h2 class="clear-title" id="clear-title">우와! 150점을 모두 모았어요!</h2>
+          <p class="clear-desc" id="clear-desc">
+            자음과 모음을 정말 잘 합쳤어요!<br />
+            다음 단계에서는 풍선이 조금 더 씩씩하게 내려와요.
+          </p>
+          <div class="stars-reward">
+            <span class="star-pop s1">⭐</span>
+            <span class="star-pop s2">🌟</span>
+            <span class="star-pop s3">⭐</span>
+          </div>
+          <button class="big-action-btn next-stage-btn" id="next-stage-btn">
+            🚀 다음 단계로 출발!
+          </button>
+        </div>
+      </div>
+
+      <!-- 5단계 최종 우승 축하 모달 -->
+      <div class="modal-overlay" id="all-clear-modal">
+        <div class="modal-card final-card">
+          <div class="trophy-icon">🏆</div>
+          <div class="clear-badge gold">5단계 모두 성공!</div>
+          <h2 class="clear-title">축하합니다! 한글 박사님 탄생! 🎉</h2>
+          <p class="clear-desc">
+            "가, 나, 다, 라, 마, 바, 사, 자, 차, 카, 타, 파, 하"<br />
+            모든 글자 풍선을 멋지게 터트렸어요!
+          </p>
+          <div class="final-score-board">
+            <span>최종 획득 점수</span>
+            <strong id="final-total-score">750점</strong>
+          </div>
+          <button class="big-action-btn restart-game-btn" id="restart-game-btn">
+            🔄 처음부터 다시 놀기
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
