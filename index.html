@@ -41,15 +41,17 @@
           <!-- 1인 모드용 학습 과정 선택 드롭다운 -->
           <div class="course-selector-badge" id="hud-1p-course-badge">
             <span class="stage-icon" id="course-badge-icon">🌱</span>
-            <select id="hud-course-select" class="hud-course-select" title="학습 과정 선택">
-              <option value="1">1과정: 모음 'ㅏ' (가~하)</option>
-              <option value="2">2과정: 모음 'ㅓ' (거~허)</option>
-              <option value="3">3과정: 모음 'ㅗ' (고~호)</option>
-              <option value="4">4과정: 모음 'ㅜ' (구~후)</option>
-              <option value="5">5과정: 모음 'ㅡ' (그~흐)</option>
-              <option value="6">6과정: 모음 'ㅣ' (기~히)</option>
-              <option value="7">7과정: 모든 글자 랜덤 🌟</option>
-            </select>
+            <select id="hud-course-select" class="hud-course-select" title="학습 과정 선택"><option value="1">1과정: 모음 'ㅏ'</option>
+<option value="2">2과정: 모음 'ㅓ'</option>
+<option value="3">3과정: 모음 'ㅗ'</option>
+<option value="4">4과정: 모음 'ㅜ'</option>
+<option value="5">5과정: 모음 'ㅡ'</option>
+<option value="6">6과정: 모음 'ㅣ'</option>
+<option value="7">7과정: 모음 'ㅑ'</option>
+<option value="8">8과정: 모음 'ㅕ'</option>
+<option value="9">9과정: 모음 'ㅛ'</option>
+<option value="10">10과정: 모음 'ㅠ'</option>
+<option value="11">11과정: 기본 모음 전체 복습 🌟</option></select>
           </div>
           <!-- 2인 모드용 개별 맞춤 학습 안내 배지 -->
           <div class="course-selector-badge mode-2p-badge" id="hud-2p-course-badge" style="display: none;">
@@ -118,17 +120,19 @@
             <div class="lane-score-top">
               <div class="lane-player-left">
                 <span class="player-tag p1-tag">🟦 1번 친구</span>
-                <select id="p1-course-select" class="lane-course-select p1-select" title="1번 친구 학습 과정 선택">
-                  <option value="1">1과정: 모음 'ㅏ'</option>
-                  <option value="2">2과정: 모음 'ㅓ'</option>
-                  <option value="3">3과정: 모음 'ㅗ'</option>
-                  <option value="4">4과정: 모음 'ㅜ'</option>
-                  <option value="5">5과정: 모음 'ㅡ'</option>
-                  <option value="6">6과정: 모음 'ㅣ'</option>
-                  <option value="7">7과정: 전체 랜덤 🌟</option>
-                </select>
+                <select id="p1-course-select" class="lane-course-select p1-select" title="1번 친구 학습 과정 선택"><option value="1">1과정: 모음 'ㅏ'</option>
+<option value="2">2과정: 모음 'ㅓ'</option>
+<option value="3">3과정: 모음 'ㅗ'</option>
+<option value="4">4과정: 모음 'ㅜ'</option>
+<option value="5">5과정: 모음 'ㅡ'</option>
+<option value="6">6과정: 모음 'ㅣ'</option>
+<option value="7">7과정: 모음 'ㅑ'</option>
+<option value="8">8과정: 모음 'ㅕ'</option>
+<option value="9">9과정: 모음 'ㅛ'</option>
+<option value="10">10과정: 모음 'ㅠ'</option>
+<option value="11">11과정: 기본 모음 전체 복습 🌟</option></select>
               </div>
-              <span class="lane-score-numbers"><strong id="p1-stage-score">0</strong> / 150점</span>
+              <button type="button" class="student-hint-btn active" data-player-hint="1" aria-pressed="true" aria-label="1번 친구 힌트">💡 힌트 켜짐</button><span class="lane-score-numbers"><strong id="p1-stage-score">0</strong> / 150점</span>
               <span class="lane-total-pill">총점 <b id="p1-total-score">0</b>점</span>
             </div>
             <div class="progress-track lane-progress-track" id="p1-progress-track">
@@ -195,17 +199,19 @@
             <div class="lane-score-top">
               <div class="lane-player-left">
                 <span class="player-tag p2-tag">🟥 2번 친구</span>
-                <select id="p2-course-select" class="lane-course-select p2-select" title="2번 친구 학습 과정 선택">
-                  <option value="1">1과정: 모음 'ㅏ'</option>
-                  <option value="2">2과정: 모음 'ㅓ'</option>
-                  <option value="3">3과정: 모음 'ㅗ'</option>
-                  <option value="4">4과정: 모음 'ㅜ'</option>
-                  <option value="5">5과정: 모음 'ㅡ'</option>
-                  <option value="6">6과정: 모음 'ㅣ'</option>
-                  <option value="7">7과정: 전체 랜덤 🌟</option>
-                </select>
+                <select id="p2-course-select" class="lane-course-select p2-select" title="2번 친구 학습 과정 선택"><option value="1">1과정: 모음 'ㅏ'</option>
+<option value="2">2과정: 모음 'ㅓ'</option>
+<option value="3">3과정: 모음 'ㅗ'</option>
+<option value="4">4과정: 모음 'ㅜ'</option>
+<option value="5">5과정: 모음 'ㅡ'</option>
+<option value="6">6과정: 모음 'ㅣ'</option>
+<option value="7">7과정: 모음 'ㅑ'</option>
+<option value="8">8과정: 모음 'ㅕ'</option>
+<option value="9">9과정: 모음 'ㅛ'</option>
+<option value="10">10과정: 모음 'ㅠ'</option>
+<option value="11">11과정: 기본 모음 전체 복습 🌟</option></select>
               </div>
-              <span class="lane-score-numbers"><strong id="p2-stage-score">0</strong> / 150점</span>
+              <button type="button" class="student-hint-btn active" data-player-hint="2" aria-pressed="true" aria-label="2번 친구 힌트">💡 힌트 켜짐</button><span class="lane-score-numbers"><strong id="p2-stage-score">0</strong> / 150점</span>
               <span class="lane-total-pill">총점 <b id="p2-total-score">0</b>점</span>
             </div>
             <div class="progress-track lane-progress-track" id="p2-progress-track">
@@ -291,45 +297,21 @@
             </div>
           </div>
 
-          <!-- 2-A) [1인 모드용] 7가지 학습 과정 선택 -->
+          <!-- 2-A) [1인 모드용] 11가지 학습 과정 선택 -->
           <div class="setup-section" id="course-setup-1p">
-            <div class="setup-label">📚 학습 과정 선택 (모음 1개씩 6과정 + 종합 랜덤 게임)</div>
+            <div class="setup-label">📚 학습 과정 선택 (모음 1개씩 10과정 + 기본 모음 전체 복습)</div>
             <div class="course-grid" id="start-course-grid">
-              <button type="button" class="course-card-btn active" data-course="1">
-                <span class="c-step">1과정</span>
-                <strong class="c-vowel">ㅏ</strong>
-                <span class="c-examples">가 · 나 · 다 ~ 하</span>
-              </button>
-              <button type="button" class="course-card-btn" data-course="2">
-                <span class="c-step">2과정</span>
-                <strong class="c-vowel">ㅓ</strong>
-                <span class="c-examples">거 · 너 · 더 ~ 허</span>
-              </button>
-              <button type="button" class="course-card-btn" data-course="3">
-                <span class="c-step">3과정</span>
-                <strong class="c-vowel">ㅗ</strong>
-                <span class="c-examples">고 · 노 · 도 ~ 호</span>
-              </button>
-              <button type="button" class="course-card-btn" data-course="4">
-                <span class="c-step">4과정</span>
-                <strong class="c-vowel">ㅜ</strong>
-                <span class="c-examples">구 · 누 · 두 ~ 후</span>
-              </button>
-              <button type="button" class="course-card-btn" data-course="5">
-                <span class="c-step">5과정</span>
-                <strong class="c-vowel">ㅡ</strong>
-                <span class="c-examples">그 · 느 · 드 ~ 흐</span>
-              </button>
-              <button type="button" class="course-card-btn" data-course="6">
-                <span class="c-step">6과정</span>
-                <strong class="c-vowel">ㅣ</strong>
-                <span class="c-examples">기 · 니 · 디 ~ 히</span>
-              </button>
-              <button type="button" class="course-card-btn random-master" data-course="7">
-                <span class="c-step">마지막 종합 과정 👑</span>
-                <strong class="c-vowel">모든 자음 + 모든 모음 랜덤 게임</strong>
-                <span class="c-examples">ㄱ~ㅎ + ㅏ·ㅓ·ㅗ·ㅜ·ㅡ·ㅣ 모든 글자 골고루 맞추기!</span>
-              </button>
+<button type="button" class="course-card-btn active" data-course="1"><span class="c-step">1과정</span><strong class="c-vowel">ㅏ</strong></button>
+<button type="button" class="course-card-btn" data-course="2"><span class="c-step">2과정</span><strong class="c-vowel">ㅓ</strong></button>
+<button type="button" class="course-card-btn" data-course="3"><span class="c-step">3과정</span><strong class="c-vowel">ㅗ</strong></button>
+<button type="button" class="course-card-btn" data-course="4"><span class="c-step">4과정</span><strong class="c-vowel">ㅜ</strong></button>
+<button type="button" class="course-card-btn" data-course="5"><span class="c-step">5과정</span><strong class="c-vowel">ㅡ</strong></button>
+<button type="button" class="course-card-btn" data-course="6"><span class="c-step">6과정</span><strong class="c-vowel">ㅣ</strong></button>
+<button type="button" class="course-card-btn" data-course="7"><span class="c-step">7과정</span><strong class="c-vowel">ㅑ</strong></button>
+<button type="button" class="course-card-btn" data-course="8"><span class="c-step">8과정</span><strong class="c-vowel">ㅕ</strong></button>
+<button type="button" class="course-card-btn" data-course="9"><span class="c-step">9과정</span><strong class="c-vowel">ㅛ</strong></button>
+<button type="button" class="course-card-btn" data-course="10"><span class="c-step">10과정</span><strong class="c-vowel">ㅠ</strong></button>
+<button type="button" class="course-card-btn random-master" data-course="11"><span class="c-step">11과정 👑</span><strong class="c-vowel">기본 모음 전체 복습</strong><span class="c-examples">기본 모음 10개를 골고루 맞춰요!</span></button>
             </div>
           </div>
 
@@ -340,28 +322,36 @@
               <!-- 1번 친구 과정 선택 박스 -->
               <div class="player-course-box p1-box">
                 <div class="p-box-header p1-header">🟦 1번 친구 (왼쪽 화면) 학습 과정</div>
-                <div class="mini-course-grid" id="p1-start-course-grid">
-                  <button type="button" class="mini-course-btn active" data-player="1" data-course="1">1과정 <b>ㅏ</b></button>
-                  <button type="button" class="mini-course-btn" data-player="1" data-course="2">2과정 <b>ㅓ</b></button>
-                  <button type="button" class="mini-course-btn" data-player="1" data-course="3">3과정 <b>ㅗ</b></button>
-                  <button type="button" class="mini-course-btn" data-player="1" data-course="4">4과정 <b>ㅜ</b></button>
-                  <button type="button" class="mini-course-btn" data-player="1" data-course="5">5과정 <b>ㅡ</b></button>
-                  <button type="button" class="mini-course-btn" data-player="1" data-course="6">6과정 <b>ㅣ</b></button>
-                  <button type="button" class="mini-course-btn mini-random" data-player="1" data-course="7">👑 7과정: 모든 자음+모음 랜덤 게임</button>
+                <button type="button" class="student-hint-btn active" data-player-hint="1" aria-pressed="true" aria-label="1번 친구 힌트">💡 힌트 켜짐</button><div class="mini-course-grid" id="p1-start-course-grid">
+<button type="button" class="mini-course-btn active" data-player="1" data-course="1">1과정 <b>ㅏ</b></button>
+<button type="button" class="mini-course-btn" data-player="1" data-course="2">2과정 <b>ㅓ</b></button>
+<button type="button" class="mini-course-btn" data-player="1" data-course="3">3과정 <b>ㅗ</b></button>
+<button type="button" class="mini-course-btn" data-player="1" data-course="4">4과정 <b>ㅜ</b></button>
+<button type="button" class="mini-course-btn" data-player="1" data-course="5">5과정 <b>ㅡ</b></button>
+<button type="button" class="mini-course-btn" data-player="1" data-course="6">6과정 <b>ㅣ</b></button>
+<button type="button" class="mini-course-btn" data-player="1" data-course="7">7과정 <b>ㅑ</b></button>
+<button type="button" class="mini-course-btn" data-player="1" data-course="8">8과정 <b>ㅕ</b></button>
+<button type="button" class="mini-course-btn" data-player="1" data-course="9">9과정 <b>ㅛ</b></button>
+<button type="button" class="mini-course-btn" data-player="1" data-course="10">10과정 <b>ㅠ</b></button>
+<button type="button" class="mini-course-btn mini-random" data-player="1" data-course="11">👑 11과정: 기본 모음 전체 복습</button>
                 </div>
               </div>
 
               <!-- 2번 친구 과정 선택 박스 -->
               <div class="player-course-box p2-box">
                 <div class="p-box-header p2-header">🟥 2번 친구 (오른쪽 화면) 학습 과정</div>
-                <div class="mini-course-grid" id="p2-start-course-grid">
-                  <button type="button" class="mini-course-btn active" data-player="2" data-course="1">1과정 <b>ㅏ</b></button>
-                  <button type="button" class="mini-course-btn" data-player="2" data-course="2">2과정 <b>ㅓ</b></button>
-                  <button type="button" class="mini-course-btn" data-player="2" data-course="3">3과정 <b>ㅗ</b></button>
-                  <button type="button" class="mini-course-btn" data-player="2" data-course="4">4과정 <b>ㅜ</b></button>
-                  <button type="button" class="mini-course-btn" data-player="2" data-course="5">5과정 <b>ㅡ</b></button>
-                  <button type="button" class="mini-course-btn" data-player="2" data-course="6">6과정 <b>ㅣ</b></button>
-                  <button type="button" class="mini-course-btn mini-random" data-player="2" data-course="7">👑 7과정: 모든 자음+모음 랜덤 게임</button>
+                <button type="button" class="student-hint-btn active" data-player-hint="2" aria-pressed="true" aria-label="2번 친구 힌트">💡 힌트 켜짐</button><div class="mini-course-grid" id="p2-start-course-grid">
+<button type="button" class="mini-course-btn active" data-player="2" data-course="1">1과정 <b>ㅏ</b></button>
+<button type="button" class="mini-course-btn" data-player="2" data-course="2">2과정 <b>ㅓ</b></button>
+<button type="button" class="mini-course-btn" data-player="2" data-course="3">3과정 <b>ㅗ</b></button>
+<button type="button" class="mini-course-btn" data-player="2" data-course="4">4과정 <b>ㅜ</b></button>
+<button type="button" class="mini-course-btn" data-player="2" data-course="5">5과정 <b>ㅡ</b></button>
+<button type="button" class="mini-course-btn" data-player="2" data-course="6">6과정 <b>ㅣ</b></button>
+<button type="button" class="mini-course-btn" data-player="2" data-course="7">7과정 <b>ㅑ</b></button>
+<button type="button" class="mini-course-btn" data-player="2" data-course="8">8과정 <b>ㅕ</b></button>
+<button type="button" class="mini-course-btn" data-player="2" data-course="9">9과정 <b>ㅛ</b></button>
+<button type="button" class="mini-course-btn" data-player="2" data-course="10">10과정 <b>ㅠ</b></button>
+<button type="button" class="mini-course-btn mini-random" data-player="2" data-course="11">👑 11과정: 기본 모음 전체 복습</button>
                 </div>
               </div>
             </div>
@@ -392,7 +382,7 @@
         </div>
       </div>
 
-      <!-- 과정 클리어 축하 모달 (1~6과정 성공 시 다음 과정 안내) -->
+      <!-- 과정 클리어 축하 모달 (1~10과정 성공 시 다음 과정 안내) -->
       <div class="modal-overlay" id="stage-clear-modal">
         <div class="modal-card clear-card">
           <div class="celebration-animals">🎉 🐻 🐰 🎉</div>
@@ -418,7 +408,7 @@
         </div>
       </div>
 
-      <!-- 마지막 7과정(종합 랜덤) 최종 우승 축하 모달 -->
+      <!-- 마지막 11과정(종합 랜덤) 최종 우승 축하 모달 -->
       <div class="modal-overlay" id="all-clear-modal">
         <div class="modal-card final-card">
           <div class="trophy-icon">🏆</div>

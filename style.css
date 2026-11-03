@@ -1559,7 +1559,7 @@ html, body {
 /* 7가지 학습 과정 선택 그리드 (모음 6개 과정 + 마지막 종합 랜덤 과정) */
 .course-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 8px;
 }
 
@@ -1703,7 +1703,7 @@ html, body {
 
 .mini-course-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 6px;
 }
 
@@ -1731,7 +1731,7 @@ html, body {
 }
 
 .mini-course-btn.mini-random {
-  grid-column: span 3;
+  grid-column: 1 / -1;
   background: #f5f3ff;
   border-color: #c4b5fd;
   color: #5b21b6;
@@ -1971,3 +1971,33 @@ html, body {
   font-size: clamp(28px, 3.4vw, 48px);
   color: #ca8a04;
 }
+
+
+/* 모음 묶음 안의 위치는 유지하고, 전체 복습은 5 × 2로 표시합니다. */
+.vowel-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: 1fr;
+}
+.vowel-grid.review-grid { grid-template-rows: repeat(2, 1fr); }
+.consonant-panel { flex: 7; min-width: 0; }
+.vowel-panel { flex: 5; min-width: 0; }
+.student-hint-btn {
+  border: 2px solid #94a3b8;
+  border-radius: 10px;
+  padding: 7px 10px;
+  background: #f1f5f9;
+  color: #334155;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  min-height: 36px;
+  white-space: nowrap;
+}
+.student-hint-btn.active { background: #dcfce7; border-color: #16a34a; color: #14532d; }
+.student-hint-btn:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
+.player-course-box > .student-hint-btn { margin-bottom: 8px; }
+.lane-score-top { flex-wrap: wrap; }
+.lane-score-top .student-hint-btn { font-size: clamp(11px, 0.95vw, 15px); padding: 4px 8px; }
+[hidden] { display: none !important; }
+
+.mini-course-btn:not(.mini-random) { flex-direction: column; gap: 1px; padding: 5px 2px; }

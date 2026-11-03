@@ -2,18 +2,18 @@
  * 자음과 모음이 만나요! - 지적장애학생 맞춤형 한글 합자 학습 & 전자칠판 2인 게임
  *
  * [핵심 기능]
- * 1. 7단계 체계적 학습 과정:
+ * 1. 11단계 체계적 학습 과정:
  *    - 1과정: 모음 'ㅏ' 만나기 (가, 나, 다 ~ 하)
  *    - 2과정: 모음 'ㅓ' 만나기 (거, 너, 더 ~ 허)
  *    - 3과정: 모음 'ㅗ' 만나기 (고, 노, 도 ~ 호)
  *    - 4과정: 모음 'ㅜ' 만나기 (구, 누, 두 ~ 후)
  *    - 5과정: 모음 'ㅡ' 만나기 (그, 느, 드 ~ 흐)
  *    - 6과정: 모음 'ㅣ' 만나기 (기, 니, 디 ~ 히)
- *    - 7과정: 모든 자음(ㄱ~ㅎ) + 모든 모음(ㅏ,ㅓ,ㅗ,ㅜ,ㅡ,ㅣ) 종합 랜덤 게임
+ *    - 7~10과정: ㅑ, ㅕ, ㅛ, ㅠ / 11과정: 기본 모음 10개 전체 복습
  * 2. 전자칠판용 2인 분할 게임 모드 (1인 학습 모드 ↔ 2인 좌·우 분할 모드 실시간 전환)
  * 3. 상용 유아앱 수준의 4단계 슬로우 모션 합자 쇼케이스:
- *    - 세로모음(ㅏ, ㅓ, ㅣ)은 좌·우(초성 좌 + 중성 우) 슬로우 도킹
- *    - 가로모음(ㅗ, ㅜ, ㅡ)은 상·하(초성 상 + 중성 하) 슬로우 도킹
+ *    - 세로모음(ㅏ, ㅓ, ㅣ, ㅑ, ㅕ)은 좌·우(초성 좌 + 중성 우) 슬로우 도킹
+ *    - 가로모음(ㅗ, ㅜ, ㅡ, ㅛ, ㅠ)은 상·하(초성 상 + 중성 하) 슬로우 도킹
  * 4. 한글 창제원리 자음 음가('그, 느, 드, 르, 므...') + 또렷한 모음 음성('아, 어, 오, 우, 으, 이')
  * 5. 구글 한국어(Google 한국어) TTS 엔진 자동 우선 선택 및 테스트
  * 6. 2초 시간지연(Time Delay) 손가락 시각적 단서 제시
@@ -37,14 +37,18 @@ const CONSONANT_KEYS = [
   { c: 'ㅇ', name: '으' }
 ];
 
-// 6개 기본 모음 키패드 목록 (결합 방향: right = 우측 결합, bottom = 하단 결합)
+// 10개 기본 모음 키패드 목록 (결합 방향: right = 우측 결합, bottom = 하단 결합)
 const VOWEL_KEYS = [
   { v: 'ㅏ', name: '아', dockType: 'right' },
   { v: 'ㅓ', name: '어', dockType: 'right' },
   { v: 'ㅗ', name: '오', dockType: 'bottom' },
   { v: 'ㅜ', name: '우', dockType: 'bottom' },
   { v: 'ㅡ', name: '으', dockType: 'bottom' },
-  { v: 'ㅣ', name: '이', dockType: 'right' }
+  { v: 'ㅣ', name: '이', dockType: 'right' },
+  { v: 'ㅑ', name: '야', dockType: 'right' },
+  { v: 'ㅕ', name: '여', dockType: 'right' },
+  { v: 'ㅛ', name: '요', dockType: 'bottom' },
+  { v: 'ㅠ', name: '유', dockType: 'bottom' }
 ];
 
 // 유니코드 한글 조합용 테이블
@@ -78,7 +82,7 @@ function buildTargetPool(vowelsArray) {
   return pool;
 }
 
-// 7가지 학습 과정 구성 (모음 1개씩 6과정 + 전체 랜덤 종합 과정)
+// 모음 1개씩 10과정 + 기본 모음 전체 복습
 const COURSE_CONFIG = {
   1: {
     id: 1,
@@ -129,12 +133,34 @@ const COURSE_CONFIG = {
     vowels: ['ㅣ']
   },
   7: {
-    id: 7,
-    icon: '👑',
-    shortTitle: '7과정 종합 랜덤',
-    fullTitle: '7과정: 모든 자음 + 모음 랜덤 게임',
-    desc: '모든 자음자(ㄱ~ㅎ)와 모든 모음자(ㅏ, ㅓ, ㅗ, ㅜ, ㅡ, ㅣ)를 골고루 합쳐 봐요!',
-    vowels: ['ㅏ', 'ㅓ', 'ㅗ', 'ㅜ', 'ㅡ', 'ㅣ']
+    id: 7, icon: '🌟', shortTitle: "7과정 'ㅑ'",
+    fullTitle: "7과정: 모음 'ㅑ' 만나기",
+    desc: "'ㅑ' 모음과 자음자를 합쳐 갸, 냐, 댜 ~ 햐 글자를 만들어요!",
+    vowels: ['ㅑ']
+  },
+  8: {
+    id: 8, icon: '🌟', shortTitle: "8과정 'ㅕ'",
+    fullTitle: "8과정: 모음 'ㅕ' 만나기",
+    desc: "'ㅕ' 모음과 자음자를 합쳐 겨, 녀, 뎌 ~ 혀 글자를 만들어요!",
+    vowels: ['ㅕ']
+  },
+  9: {
+    id: 9, icon: '🌟', shortTitle: "9과정 'ㅛ'",
+    fullTitle: "9과정: 모음 'ㅛ' 만나기",
+    desc: "'ㅛ' 모음과 자음자를 합쳐 교, 뇨, 됴 ~ 효 글자를 만들어요!",
+    vowels: ['ㅛ']
+  },
+  10: {
+    id: 10, icon: '🌟', shortTitle: "10과정 'ㅠ'",
+    fullTitle: "10과정: 모음 'ㅠ' 만나기",
+    desc: "'ㅠ' 모음과 자음자를 합쳐 규, 뉴, 듀 ~ 휴 글자를 만들어요!",
+    vowels: ['ㅠ']
+  },
+  11: {
+    id: 11, icon: '👑', shortTitle: '11과정 기본 모음 전체 복습',
+    fullTitle: '11과정: 기본 모음 10개 전체 복습',
+    desc: '모든 자음자와 기본 모음 10개를 골고루 합쳐 봐요!',
+    vowels: VOWEL_KEYS.map((item) => item.v)
   }
 };
 
@@ -144,6 +170,8 @@ const SPEED_PRESETS = [
   { id: 2, fallDuration: 15.0, label: '🐥 속도: 천천히' },
   { id: 3, fallDuration: 11.8, label: '🦊 속도: 보통 속도' }
 ];
+
+const FINAL_COURSE_ID = Math.max(...Object.keys(COURSE_CONFIG).map(Number));
 
 const POINTS_PER_BALLOON = 10; // 풍선 1개당 10점
 const STAGE_GOAL_SCORE = 150;  // 과정 통과 목표 점수: 150점
@@ -559,7 +587,7 @@ class PlayerLane {
     this.prefix = prefix;           // 'p1' 또는 'p2'
     this.game = game;
 
-    this.courseId = 1;              // 플레이어 개별 학습 과정 (1~7)
+    this.courseId = 1;              // 플레이어 개별 학습 과정 (1~11)
     this.stageScore = 0;
     this.totalScore = 0;
     this.selectedConsonant = null;
@@ -568,6 +596,8 @@ class PlayerLane {
     this.letterDeck = [];
     this.isFiring = false;
 
+    this.hintEnabled = true;
+    this.pendingTasks = new Set();
     this.hintDelayTimer = null;
     this.hintCueVisible = false;
 
@@ -617,9 +647,18 @@ class PlayerLane {
       this.consonantButtons[item.c] = btn;
     });
 
+    this.buildVowelKeyboard();
+  }
+
+  buildVowelKeyboard() {
     this.vowelGrid.innerHTML = '';
     this.vowelButtons = {};
-    VOWEL_KEYS.forEach((item) => {
+    // 고정된 학습 순서에서 현재 모음과 앞서 배운 모음 최대 4개를 표시합니다.
+    const keys = this.courseId === FINAL_COURSE_ID
+      ? VOWEL_KEYS
+      : VOWEL_KEYS.slice(Math.floor((this.courseId - 1) / 5) * 5, this.courseId);
+    this.vowelGrid.classList.toggle('review-grid', this.courseId === FINAL_COURSE_ID);
+    keys.forEach((item) => {
       const btn = document.createElement('button');
       btn.className = 'key-btn vowel-btn';
       btn.textContent = item.v;
@@ -634,6 +673,7 @@ class PlayerLane {
   bindEvents() {
     if (this.clearBtn) {
       this.clearBtn.addEventListener('click', () => {
+        if (this.isFiring) return;
         this.game.sound.playTap(392.0);
         this.resetSelection();
         this.startHintCueTimer(HINT_DELAY_MS);
@@ -654,7 +694,9 @@ class PlayerLane {
   setCourse(courseId, spawnImmediately = true) {
     const newCourseId = Number(courseId) || 1;
     const isChanged = this.courseId !== newCourseId;
-    this.courseId = newCourseId;
+    this.clearActiveBalloon();
+    this.courseId = COURSE_CONFIG[newCourseId] ? newCourseId : 1;
+    this.buildVowelKeyboard();
 
     if (this.courseSelect) {
       this.courseSelect.value = String(this.courseId);
@@ -687,7 +729,7 @@ class PlayerLane {
     }
   }
 
-  // 플레이어의 개별 학습 과정(1~7과정)에 맞는 글자 풀에서 셔플 추출
+  // 플레이어의 개별 학습 과정(1~11과정)에 맞는 글자 풀에서 셔플 추출
   getNextTargetLetter() {
     if (this.letterDeck.length === 0) {
       const courseCfg = COURSE_CONFIG[this.courseId] || COURSE_CONFIG[1];
@@ -811,6 +853,27 @@ class PlayerLane {
     }
   }
 
+  get isHintEnabled() {
+    return this.game.playMode === '2p' ? this.hintEnabled : this.game.hintEnabled;
+  }
+
+  refreshHint() {
+    if (this.isHintEnabled) this.startHintCueTimer(HINT_DELAY_MS);
+    else {
+      this.clearHintCueTimer();
+      this.updateHintHighlights();
+    }
+  }
+
+  scheduleBalloonTask(callback, delay) {
+    const balloon = this.activeBalloon;
+    const timer = setTimeout(() => {
+      this.pendingTasks.delete(timer);
+      if (this.game.isPlaying && this.activeBalloon === balloon) callback();
+    }, delay);
+    this.pendingTasks.add(timer);
+  }
+
   clearHintCueTimer() {
     if (this.hintDelayTimer) {
       clearTimeout(this.hintDelayTimer);
@@ -822,11 +885,11 @@ class PlayerLane {
   startHintCueTimer(delayMs = HINT_DELAY_MS) {
     this.clearHintCueTimer();
     this.updateHintHighlights();
-    if (!this.game.hintEnabled || !this.activeBalloon) return;
+    if (!this.isHintEnabled || !this.activeBalloon) return;
 
     this.hintDelayTimer = setTimeout(() => {
       this.hintDelayTimer = null;
-      if (this.game.isPlaying && this.game.hintEnabled && this.activeBalloon && !this.activeBalloon.popped) {
+      if (this.game.isPlaying && this.isHintEnabled && this.activeBalloon && !this.activeBalloon.popped) {
         this.hintCueVisible = true;
         this.updateHintHighlights();
       }
@@ -837,8 +900,8 @@ class PlayerLane {
     Object.values(this.consonantButtons).forEach((b) => b.classList.remove('hint-glow'));
     Object.values(this.vowelButtons).forEach((b) => b.classList.remove('hint-glow'));
 
-    this.helperCard.classList.toggle('hidden-hint', !this.game.hintEnabled);
-    if (!this.game.hintEnabled || !this.activeBalloon || !this.hintCueVisible) return;
+    this.helperCard.classList.toggle('hidden-hint', !this.isHintEnabled);
+    if (!this.isHintEnabled || !this.activeBalloon || !this.hintCueVisible) return;
 
     const target = this.activeBalloon.target;
     if (this.selectedConsonant !== target.c && this.consonantButtons[target.c]) {
@@ -867,6 +930,9 @@ class PlayerLane {
   }
 
   clearActiveBalloon() {
+    this.pendingTasks.forEach(clearTimeout);
+    this.pendingTasks.clear();
+    this.isFiring = false;
     this.clearHintCueTimer();
     this.clearFusionStage();
     if (this.activeBalloon && this.activeBalloon.el) {
@@ -928,12 +994,12 @@ class PlayerLane {
       this.isFiring = true;
       const cChosen = this.selectedConsonant;
       const vChosen = this.selectedVowel;
-      setTimeout(() => {
+      this.scheduleBalloonTask(() => {
         this.animateCombineAndPop(cChosen, vChosen, combined);
       }, 550);
     } else {
       this.isFiring = true;
-      setTimeout(() => {
+      this.scheduleBalloonTask(() => {
         this.game.sound.playGentleMismatch();
         this.game.sound.speak(`${combined}! 풍선 글자는 ${target.char}예요. 다시 골라볼까요?`, 0.92);
 
@@ -947,7 +1013,7 @@ class PlayerLane {
           }
         });
 
-        setTimeout(() => {
+        this.scheduleBalloonTask(() => {
           [cBtn, vBtn].forEach((btn) => {
             if (btn) btn.style.animation = '';
           });
@@ -1078,7 +1144,7 @@ class PlayerLane {
       vTile.classList.add('slow-docking');
 
       if (isBottomVowel) {
-        // 가로모음(ㅗ, ㅜ, ㅡ): 자음은 위쪽(초성), 모음은 아래쪽(중성)으로 천천히 도킹
+        // 가로모음(ㅗ, ㅜ, ㅡ, ㅛ, ㅠ): 자음은 위쪽(초성), 모음은 아래쪽(중성)으로 천천히 도킹
         cTile.style.left = `${stageCenterX}px`;
         cTile.style.top = `${charCenterY - dockOffsetY}px`;
         cTile.style.transform = 'translate(-50%, -50%) scale(1.12)';
@@ -1087,7 +1153,7 @@ class PlayerLane {
         vTile.style.top = `${charCenterY + dockOffsetY}px`;
         vTile.style.transform = 'translate(-50%, -50%) scale(1.12)';
       } else {
-        // 세로모음(ㅏ, ㅓ, ㅣ): 자음은 왼쪽(초성), 모음은 오른쪽(중성)으로 천천히 도킹
+        // 세로모음(ㅏ, ㅓ, ㅣ, ㅑ, ㅕ): 자음은 왼쪽(초성), 모음은 오른쪽(중성)으로 천천히 도킹
         cTile.style.left = `${stageCenterX - dockOffsetX}px`;
         cTile.style.top = `${charCenterY}px`;
         cTile.style.transform = 'translate(-50%, -50%) scale(1.16)';
@@ -1222,7 +1288,7 @@ class PlayerLane {
     this.updateScoreUI();
     this.triggerEnergyBarImpact();
 
-    setTimeout(() => {
+    this.scheduleBalloonTask(() => {
       this.clearActiveBalloon();
       this.resetSelection();
 
@@ -1241,7 +1307,7 @@ class HangulBalloonGame {
     this.sound = new SoundManager();
     this.fx = new ParticleSystem(document.getElementById('fx-canvas'));
 
-    this.currentCourse = 1;     // 1인 모드 학습 과정 (1 ~ 7과정)
+    this.currentCourse = 1;     // 1인 모드 학습 과정 (1 ~ 11과정)
     this.startCourse1P = 1;     // 시작 화면 1P 선택 과정
     this.startCourseP1_2P = 1;  // 시작 화면 2P 모드 1번 친구 선택 과정
     this.startCourseP2_2P = 1;  // 시작 화면 2P 모드 2번 친구 선택 과정
@@ -1437,10 +1503,10 @@ class HangulBalloonGame {
     if (this.isPlaying) {
       if (this.playMode === '1p') {
         this.lane2.clearActiveBalloon();
-        this.lane1.setCourse(this.currentCourse, false);
+        this.lane1.setCourse(this.currentCourse, true);
         this.lane1.updateScoreUI();
       } else {
-        this.lane1.setCourse(this.startCourseP1_2P, false);
+        this.lane1.setCourse(this.startCourseP1_2P, true);
         this.lane2.setCourse(this.startCourseP2_2P, false);
         this.lane2.resetForNewCourse(false);
         this.lane2.spawnSingleBalloon(false);
@@ -1450,6 +1516,8 @@ class HangulBalloonGame {
 
   updateModeUI() {
     const is2P = this.playMode === '2p';
+    this.hintBtn.hidden = is2P;
+    [this.lane1, this.lane2].forEach((lane) => lane.refreshHint());
     this.lanesWrapper.classList.toggle('mode-2p', is2P);
     this.lanesWrapper.classList.toggle('mode-1p', !is2P);
 
@@ -1526,7 +1594,7 @@ class HangulBalloonGame {
       });
     }
 
-    // 시작 모달: 1인 모드 7가지 학습 과정 카드 선택
+    // 시작 모달: 1인 모드 11가지 학습 과정 카드 선택
     this.courseCardBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         this.sound.playTap(659.25);
@@ -1605,13 +1673,13 @@ class HangulBalloonGame {
       this.sound.playTap(659.25);
       this.stageClearModal.classList.remove('active');
       if (this.playMode === '1p') {
-        const nextCourse = Math.min(7, this.lane1.courseId + 1);
+        const nextCourse = Math.min(FINAL_COURSE_ID, this.lane1.courseId + 1);
         this.setCourseSelection(nextCourse);
         this.startCourse(nextCourse, false);
       } else {
         // 2인 모드: 150점에 도달한 학생의 과정을 1단계 상승
-        const p1Next = Math.min(7, this.lane1.stageScore >= STAGE_GOAL_SCORE ? this.lane1.courseId + 1 : this.lane1.courseId);
-        const p2Next = Math.min(7, this.lane2.stageScore >= STAGE_GOAL_SCORE ? this.lane2.courseId + 1 : this.lane2.courseId);
+        const p1Next = Math.min(FINAL_COURSE_ID, this.lane1.stageScore >= STAGE_GOAL_SCORE ? this.lane1.courseId + 1 : this.lane1.courseId);
+        const p2Next = Math.min(FINAL_COURSE_ID, this.lane2.stageScore >= STAGE_GOAL_SCORE ? this.lane2.courseId + 1 : this.lane2.courseId);
         this.start2PCourse(p1Next, p2Next, false);
       }
     });
@@ -1652,19 +1720,25 @@ class HangulBalloonGame {
       });
     }
 
-    // 힌트 토글
+    // 1인 힌트와 2인 학생별 힌트를 별도로 유지합니다.
     this.hintBtn.addEventListener('click', () => {
       this.hintEnabled = !this.hintEnabled;
       this.hintBtn.classList.toggle('active', this.hintEnabled);
+      this.hintBtn.setAttribute('aria-pressed', String(this.hintEnabled));
       this.hintBtn.innerHTML = this.hintEnabled ? '💡 <span>힌트 켜짐</span>' : '💡 <span>힌트 꺼짐</span>';
-
-      [this.lane1, this.lane2].forEach((lane) => {
-        if (this.hintEnabled) {
-          lane.startHintCueTimer(HINT_DELAY_MS);
-        } else {
-          lane.clearHintCueTimer();
-          lane.updateHintHighlights();
-        }
+      if (this.playMode === '1p') this.lane1.refreshHint();
+    });
+    document.querySelectorAll('[data-player-hint]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const player = Number(button.dataset.playerHint);
+        const lane = player === 1 ? this.lane1 : this.lane2;
+        lane.hintEnabled = !lane.hintEnabled;
+        document.querySelectorAll(`[data-player-hint="${player}"]`).forEach((control) => {
+          control.textContent = `💡 힌트 ${lane.hintEnabled ? '켜짐' : '꺼짐'}`;
+          control.classList.toggle('active', lane.hintEnabled);
+          control.setAttribute('aria-pressed', String(lane.hintEnabled));
+        });
+        lane.refreshHint();
       });
     });
 
@@ -1690,6 +1764,7 @@ class HangulBalloonGame {
     this.homeBtn.addEventListener('click', () => {
       this.sound.playTap(523.25);
       this.isPlaying = false;
+      this.stopGameLoop();
       this.lane1.clearActiveBalloon();
       this.lane2.clearActiveBalloon();
       this.stageClearModal.classList.remove('active');
@@ -1698,8 +1773,14 @@ class HangulBalloonGame {
     });
   }
 
+  stopGameLoop() {
+    clearTimeout(this.startTimer);
+    cancelAnimationFrame(this.frameRequest);
+  }
+
   // 1인 모드 코스 시작
   startCourse(courseId, resetTotal = false) {
+    this.stopGameLoop();
     this.currentCourse = Number(courseId) || 1;
     this.startCourse1P = this.currentCourse;
     this.isPlaying = true;
@@ -1717,16 +1798,17 @@ class HangulBalloonGame {
       this.speedIndicator.textContent = preset.label;
     }
 
-    setTimeout(() => {
+    this.startTimer = setTimeout(() => {
       if (!this.isPlaying) return;
       this.lane1.spawnSingleBalloon(true);
       this.lastFrameTime = performance.now();
-      requestAnimationFrame((ts) => this.gameLoop(ts));
+      this.frameRequest = requestAnimationFrame((ts) => this.gameLoop(ts));
     }, 450);
   }
 
   // 전자칠판 2인 분할 모드 개별 과정 코스 시작
   start2PCourse(courseP1, courseP2, resetTotal = false) {
+    this.stopGameLoop();
     this.isPlaying = true;
     this.isPaused = false;
 
@@ -1746,12 +1828,12 @@ class HangulBalloonGame {
       this.speedIndicator.textContent = preset.label;
     }
 
-    setTimeout(() => {
+    this.startTimer = setTimeout(() => {
       if (!this.isPlaying) return;
       this.lane1.spawnSingleBalloon(true);
       this.lane2.spawnSingleBalloon(false);
       this.lastFrameTime = performance.now();
-      requestAnimationFrame((ts) => this.gameLoop(ts));
+      this.frameRequest = requestAnimationFrame((ts) => this.gameLoop(ts));
     }, 450);
   }
 
@@ -1769,7 +1851,7 @@ class HangulBalloonGame {
       }
     }
 
-    requestAnimationFrame((ts) => this.gameLoop(ts));
+    this.frameRequest = requestAnimationFrame((ts) => this.gameLoop(ts));
   }
 
   // 플레이어가 150점 목표를 달성했을 때 호출 (1P / 2P 개별 과정 반영)
@@ -1787,7 +1869,7 @@ class HangulBalloonGame {
 
     if (!is2P) {
       const curCfg = COURSE_CONFIG[this.lane1.courseId] || COURSE_CONFIG[1];
-      if (this.lane1.courseId < 7) {
+      if (this.lane1.courseId < FINAL_COURSE_ID) {
         const nextCfg = COURSE_CONFIG[this.lane1.courseId + 1];
         this.clearStageBadge.textContent = `${curCfg.shortTitle} 성공!`;
         this.clearTitle.textContent = `우와! ${curCfg.shortTitle} 150점을 모두 모았어요! 🎉`;
@@ -1798,7 +1880,7 @@ class HangulBalloonGame {
         this.sound.speak(`${curCfg.shortTitle} 성공! 백오십 점을 모두 모았어요! 다음 과정으로 출발해 볼까요?`, 0.95);
         this.stageClearModal.classList.add('active');
       } else {
-        // 7과정(종합 랜덤) 클리어!
+        // 기본 모음 전체 복습 클리어!
         this.isPlaying = false;
         this.finalClearBadge.textContent = '모든 학습 과정 마스터!';
         this.finalClearTitle.textContent = '축하합니다! 한글 합자 박사님 탄생! 🎉';
@@ -1811,7 +1893,7 @@ class HangulBalloonGame {
       const winnerLane = winnerPlayerIndex === 1 ? this.lane1 : this.lane2;
       const curCfg = COURSE_CONFIG[winnerLane.courseId] || COURSE_CONFIG[1];
 
-      if (winnerLane.courseId >= 7) {
+      if (winnerLane.courseId >= FINAL_COURSE_ID) {
         this.isPlaying = false;
         this.finalClearBadge.textContent = '전자칠판 2인 종합 게임 성공!';
         this.finalClearTitle.textContent = `🏆 ${winnerPlayerIndex}번 친구 150점 달성! 두 친구 모두 한글 박사님! 🎉`;
