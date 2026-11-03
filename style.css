@@ -837,8 +837,8 @@ html, body {
 }
 
 @keyframes balloonWaitPulse {
-  0% { transform: scale(1); filter: brightness(1); }
-  100% { transform: scale(1.06); filter: brightness(1.08) drop-shadow(0 0 18px rgba(250, 204, 21, 0.85)); }
+  0% { transform: scale(1); }
+  100% { transform: scale(1.06); }
 }
 
 /* ================= 상용 앱 수준 슬로우 모션 합자(자음+모음➔완성글자) 쇼케이스 ================= */
@@ -918,15 +918,9 @@ html, body {
   pointer-events: none;
   z-index: 24;
   transition:
-    width 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-    height 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-    left 0.82s cubic-bezier(0.34, 1.18, 0.64, 1),
-    top 0.82s cubic-bezier(0.34, 1.18, 0.64, 1),
     transform 0.55s cubic-bezier(0.34, 1.4, 0.64, 1),
-    opacity 0.4s ease,
-    border-color 0.4s ease,
-    box-shadow 0.4s ease;
-  will-change: transform, left, top, width, height, opacity;
+    opacity 0.4s ease;
+  will-change: transform, opacity;
 }
 
 .fusion-stage-board.active {
@@ -935,10 +929,8 @@ html, body {
 }
 
 .fusion-stage-board.completed {
-  width: clamp(164px, 18vw, 250px);
-  height: clamp(160px, 17.5vw, 242px);
   background: linear-gradient(180deg, #ffffff 0%, #fefce8 100%);
-  border: 6px solid #f59e0b;
+  border: 5px solid #f59e0b;
   box-shadow:
     0 0 45px rgba(245, 158, 11, 0.9),
     0 22px 48px rgba(15, 23, 42, 0.32),
@@ -947,12 +939,7 @@ html, body {
 }
 
 .fusion-stage-board.flying-to-balloon {
-  transition:
-    left 0.82s cubic-bezier(0.34, 1.15, 0.64, 1),
-    top 0.82s cubic-bezier(0.34, 1.15, 0.64, 1),
-    transform 0.82s ease-in-out,
-    opacity 0.3s ease;
-  transform: translate(-50%, -50%) scale(0.62);
+  transition: none;
   z-index: 28;
 }
 
@@ -1050,13 +1037,11 @@ html, body {
   pointer-events: none;
   transform: translate(-50%, -50%);
   transition:
-    left 0.72s cubic-bezier(0.22, 1, 0.36, 1),
-    top 0.72s cubic-bezier(0.22, 1, 0.36, 1),
     transform 0.72s cubic-bezier(0.34, 1.45, 0.64, 1),
     color 0.45s ease,
     text-shadow 0.45s ease,
     opacity 0.38s ease;
-  will-change: transform, left, top, opacity;
+  will-change: transform, opacity;
 }
 
 .anim-pop-tile::before {
@@ -1088,8 +1073,6 @@ html, body {
 
 .anim-pop-tile.slow-docking {
   transition:
-    left 1.25s cubic-bezier(0.37, 0, 0.22, 1),
-    top 1.25s cubic-bezier(0.37, 0, 0.22, 1),
     transform 1.25s cubic-bezier(0.37, 0, 0.22, 1),
     color 0.4s ease,
     text-shadow 0.4s ease,
@@ -2001,3 +1984,6 @@ html, body {
 [hidden] { display: none !important; }
 
 .mini-course-btn:not(.mini-random) { flex-direction: column; gap: 1px; padding: 5px 2px; }
+
+/* Inline layout lets the score number scale without animating text shadows. */
+.score-numbers strong, .lane-score-numbers strong { display: inline-block; }

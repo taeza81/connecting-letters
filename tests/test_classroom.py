@@ -125,6 +125,58 @@ class ClassroomTests(unittest.TestCase):
         self.assertGreater(self.page.evaluate('stamps.length'), 2)
         self.assertTrue(self.page.evaluate('stamps.length === new Set(stamps).size'))
 
+    def test_particles_stop_when_idle_and_expire_after_a_stall(self):
+        self.assertIsNone(self.page.evaluate('game.fx.frameRequest'))
+        self.page.evaluate('game.fx.burst(200,200,10000)')
+        self.assertLessEqual(self.page.evaluate('game.fx.particles.length'), 96)
+        self.assertTrue(self.page.evaluate('game.fx.canvas.width <= 1280 && game.fx.canvas.height <= 720'))
+        # A stalled frame must not extend the particles' real-time lifetime.
+        self.page.evaluate('''() => {const until=performance.now()+1100;
+            while(performance.now()<until) {} }''')
+        self.page.wait_for_function('game.fx.particles.length === 0 && game.fx.frameRequest === null')
+        self.page.evaluate('''() => {window.draws=0;const original=game.fx.animate.bind(game.fx);
+            game.fx.animate=t=>{draws++;original(t)};}''')
+        self.page.wait_for_timeout(150)
+        self.assertEqual(self.page.evaluate('draws'), 0)
+        self.page.evaluate('game.fx.burst(200,200,10)')
+        self.page.wait_for_function('draws > 0')
+        self.page.wait_for_function('game.fx.frameRequest === null')
+
+    def test_simultaneous_flights_arrive_at_each_balloon(self):
+        self.start(7, 10)
+        self.page.evaluate('''() => {
+            for(const l of [game.lane1, game.lane2]) {
+                l.activeBalloon.progress=.4;
+                l.updateBalloonFrame(0,19);
+                l.animateCombineAndPop(l.activeBalloon.target.c,l.activeBalloon.target.v,l.activeBalloon.target.char);
+            }
+        }''')
+        self.page.wait_for_function('game.lane1.fusionFlightAnimation && game.lane2.fusionFlightAnimation')
+        self.assertTrue(self.page.evaluate('''() => [game.lane1,game.lane2].every(l=>{
+            l.fusionFlightAnimation.pause();
+            l.fusionFlightAnimation.currentTime=819;
+            const a=l.laneEl.querySelector('.fusion-stage-board').getBoundingClientRect();
+            const b=l.activeBalloon.el.getBoundingClientRect();
+            return Math.abs(a.left+a.width/2-b.left-b.width/2)<2 &&
+                Math.abs(a.top+a.height/2-b.top-b.height*.42)<2;
+        })'''))
+        self.page.evaluate('game.lane1.fusionFlightAnimation.play(); game.lane2.fusionFlightAnimation.play()')
+        self.page.wait_for_function('game.lane1.stageScore === 10 && game.lane2.stageScore === 10')
+        self.page.wait_for_function("document.querySelectorAll('.fusion-stage-board').length === 0")
+
+    def test_course_change_cancels_flight_and_trail(self):
+        self.start(9)
+        self.page.evaluate('''() => {const l=game.lane1;
+            l.animateCombineAndPop(l.activeBalloon.target.c,l.activeBalloon.target.v,l.activeBalloon.target.char);
+        }''')
+        self.page.wait_for_function('game.lane1.fusionFlightAnimation !== undefined && game.lane1.fusionFlightAnimation !== null')
+        self.page.evaluate('game.lane1.setCourse(10,true)')
+        self.page.wait_for_timeout(1100)
+        self.assertEqual(self.page.evaluate('game.lane1.stageScore'), 0)
+        self.assertIsNone(self.page.evaluate('game.lane1.fusionFlightAnimation'))
+        self.assertIsNone(self.page.evaluate('game.lane1.fusionTrailInterval'))
+        self.assertEqual(self.page.locator('.fusion-stage-board').count(), 0)
+
     def test_review_keyboard_fits_split_screen(self):
         for width, height in [(1920,1080), (1280,800), (1024,768)]:
             with self.subTest(width=width):

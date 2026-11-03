@@ -484,99 +484,93 @@ class ParticleSystem {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.particles = [];
+    this.frameRequest = null;
+    this.maxParticles = 96;
+    this.colors = ['#ff5d8f', '#ffd166', '#06d6a0', '#118ab2', '#a855f7', '#f97316', '#ffffff'];
+    // Shapes are rasterized once, rather than rebuilt for every particle/frame.
+    this.sprites = this.colors.map((color) => [false, true].map((star) => {
+      const sprite = document.createElement('canvas');
+      sprite.width = sprite.height = 32;
+      const ctx = sprite.getContext('2d');
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      if (star) {
+        for (let i = 0; i < 5; i++) {
+          const angle = i * 4 * Math.PI / 5 - Math.PI / 2;
+          const x = 16 + Math.cos(angle) * 14;
+          const y = 16 + Math.sin(angle) * 14;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+      } else ctx.arc(16, 16, 8.4, 0, Math.PI * 2);
+      ctx.fill();
+      return sprite;
+    }));
     this.resize();
     window.addEventListener('resize', () => this.resize());
-    this.animate();
   }
 
   resize() {
     const rect = this.canvas.parentElement.getBoundingClientRect();
-    this.canvas.width = rect.width;
-    this.canvas.height = rect.height;
+    this.width = rect.width;
+    this.height = rect.height;
+    // Bound the transparent backing surface even on a 4K classroom display.
+    this.scale = Math.min(1, 1280 / Math.max(1, this.width), 720 / Math.max(1, this.height));
+    this.canvas.width = Math.max(1, Math.round(this.width * this.scale));
+    this.canvas.height = Math.max(1, Math.round(this.height * this.scale));
+    this.ctx.setTransform(this.scale, 0, 0, this.scale, 0, 0);
   }
 
   burst(x, y, count = 34) {
-    const colors = ['#ff5d8f', '#ffd166', '#06d6a0', '#118ab2', '#a855f7', '#f97316', '#ffffff'];
+    count = Math.min(this.maxParticles, Math.ceil(count * 0.65));
+    const overflow = this.particles.length + count - this.maxParticles;
+    if (overflow > 0) this.particles.splice(0, overflow);
+    const born = performance.now();
     for (let i = 0; i < count; i++) {
-      const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
-      const speed = 3 + Math.random() * 8;
+      const angle = Math.PI * 2 * i / count + (Math.random() - 0.5) * 0.4;
+      const speed = 180 + Math.random() * 480;
+      const color = Math.floor(Math.random() * this.colors.length);
       this.particles.push({
-        x,
-        y,
+        x, y, born,
         vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - 2,
+        vy: Math.sin(angle) * speed - 120,
         size: 6 + Math.random() * 8,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        rotation: Math.random() * Math.PI * 2,
-        vRot: (Math.random() - 0.5) * 0.2,
-        alpha: 1,
-        decay: 0.014 + Math.random() * 0.012,
-        shape: i % 3 === 0 ? 'star' : 'circle'
+        lifetime: 650 + Math.random() * 300,
+        sprite: this.sprites[color][i % 3 === 0 ? 1 : 0]
       });
+    }
+    if (this.frameRequest === null && this.particles.length) {
+      this.frameRequest = requestAnimationFrame((time) => this.animate(time));
     }
   }
 
   celebrationFireworks() {
-    const w = this.canvas.width;
-    const h = this.canvas.height;
-    const spots = [
-      { x: w * 0.22, y: h * 0.35 },
-      { x: w * 0.5, y: h * 0.25 },
-      { x: w * 0.78, y: h * 0.35 },
-      { x: w * 0.35, y: h * 0.5 },
-      { x: w * 0.65, y: h * 0.5 }
-    ];
-    spots.forEach((pos, idx) => {
-      setTimeout(() => {
-        this.burst(pos.x, pos.y, 42);
-      }, idx * 220);
+    const spots = [[0.22, 0.35], [0.5, 0.25], [0.78, 0.35], [0.35, 0.5], [0.65, 0.5]];
+    spots.forEach(([x, y], idx) => {
+      setTimeout(() => this.burst(this.width * x, this.height * y, 42), idx * 220);
     });
   }
 
-  drawStar(ctx, x, y, r) {
-    ctx.beginPath();
-    for (let i = 0; i < 5; i++) {
-      const outerAngle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
-      const px = x + Math.cos(outerAngle) * r;
-      const py = y + Math.sin(outerAngle) * r;
-      if (i === 0) ctx.moveTo(px, py);
-      else ctx.lineTo(px, py);
+  animate(timestamp) {
+    this.frameRequest = null;
+    this.ctx.clearRect(0, 0, this.width + 1, this.height + 1);
+    let live = 0;
+    for (const particle of this.particles) {
+      const age = Math.max(0, timestamp - particle.born);
+      if (age >= particle.lifetime) continue;
+      this.particles[live++] = particle;
+      const seconds = age / 1000;
+      const x = particle.x + particle.vx * seconds;
+      const y = particle.y + particle.vy * seconds + 324 * seconds * seconds;
+      this.ctx.globalAlpha = 1 - age / particle.lifetime;
+      const size = particle.size;
+      this.ctx.drawImage(particle.sprite, x - size, y - size, size * 2, size * 2);
     }
-    ctx.closePath();
-    ctx.fill();
-  }
-
-  animate() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    for (let i = this.particles.length - 1; i >= 0; i--) {
-      const p = this.particles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.18;
-      p.rotation += p.vRot;
-      p.alpha -= p.decay;
-
-      if (p.alpha <= 0) {
-        this.particles.splice(i, 1);
-        continue;
-      }
-
-      this.ctx.save();
-      this.ctx.globalAlpha = Math.max(0, p.alpha);
-      this.ctx.fillStyle = p.color;
-
-      if (p.shape === 'star') {
-        this.drawStar(this.ctx, p.x, p.y, p.size);
-      } else {
-        this.ctx.beginPath();
-        this.ctx.arc(p.x, p.y, p.size * 0.6, 0, Math.PI * 2);
-        this.ctx.fill();
-      }
-      this.ctx.restore();
-    }
-
-    requestAnimationFrame(() => this.animate());
+    this.particles.length = live;
+    this.ctx.globalAlpha = 1;
+    // The last frame has cleared expired particles; leave no idle animation loop.
+    if (live) this.frameRequest = requestAnimationFrame((time) => this.animate(time));
   }
 }
 
@@ -913,6 +907,10 @@ class PlayerLane {
   }
 
   clearFusionStage() {
+    if (this.fusionFlightAnimation) {
+      this.fusionFlightAnimation.cancel();
+      this.fusionFlightAnimation = null;
+    }
     if (this.fusionTimers && this.fusionTimers.length > 0) {
       this.fusionTimers.forEach((t) => clearTimeout(t));
       this.fusionTimers = [];
@@ -1120,13 +1118,9 @@ class PlayerLane {
     this.game.sound.playLiftOffChime();
     requestAnimationFrame(() => {
       spotlight.classList.add('active');
-      cTile.style.left = `${stageCenterX - sideGapX}px`;
-      cTile.style.top = `${charCenterY}px`;
-      cTile.style.transform = 'translate(-50%, -50%) scale(1.05)';
+      cTile.style.transform = `translate(-50%, -50%) translate3d(${stageCenterX - sideGapX - startC_X}px, ${charCenterY - startC_Y}px, 0) scale(1.05)`;
 
-      vTile.style.left = `${stageCenterX + sideGapX}px`;
-      vTile.style.top = `${charCenterY}px`;
-      vTile.style.transform = 'translate(-50%, -50%) scale(1.05)';
+      vTile.style.transform = `translate(-50%, -50%) translate3d(${stageCenterX + sideGapX - startV_X}px, ${charCenterY - startV_Y}px, 0) scale(1.05)`;
 
       plusBadge.classList.add('visible');
     });
@@ -1145,22 +1139,14 @@ class PlayerLane {
 
       if (isBottomVowel) {
         // 가로모음(ㅗ, ㅜ, ㅡ, ㅛ, ㅠ): 자음은 위쪽(초성), 모음은 아래쪽(중성)으로 천천히 도킹
-        cTile.style.left = `${stageCenterX}px`;
-        cTile.style.top = `${charCenterY - dockOffsetY}px`;
-        cTile.style.transform = 'translate(-50%, -50%) scale(1.12)';
+        cTile.style.transform = `translate(-50%, -50%) translate3d(${stageCenterX - startC_X}px, ${charCenterY - dockOffsetY - startC_Y}px, 0) scale(1.12)`;
 
-        vTile.style.left = `${stageCenterX}px`;
-        vTile.style.top = `${charCenterY + dockOffsetY}px`;
-        vTile.style.transform = 'translate(-50%, -50%) scale(1.12)';
+        vTile.style.transform = `translate(-50%, -50%) translate3d(${stageCenterX - startV_X}px, ${charCenterY + dockOffsetY - startV_Y}px, 0) scale(1.12)`;
       } else {
         // 세로모음(ㅏ, ㅓ, ㅣ, ㅑ, ㅕ): 자음은 왼쪽(초성), 모음은 오른쪽(중성)으로 천천히 도킹
-        cTile.style.left = `${stageCenterX - dockOffsetX}px`;
-        cTile.style.top = `${charCenterY}px`;
-        cTile.style.transform = 'translate(-50%, -50%) scale(1.16)';
+        cTile.style.transform = `translate(-50%, -50%) translate3d(${stageCenterX - dockOffsetX - startC_X}px, ${charCenterY - startC_Y}px, 0) scale(1.16)`;
 
-        vTile.style.left = `${stageCenterX + dockOffsetX}px`;
-        vTile.style.top = `${charCenterY}px`;
-        vTile.style.transform = 'translate(-50%, -50%) scale(1.16)';
+        vTile.style.transform = `translate(-50%, -50%) translate3d(${stageCenterX + dockOffsetX - startV_X}px, ${charCenterY - startV_Y}px, 0) scale(1.16)`;
       }
     }, 950);
     this.fusionTimers.push(tDock);
@@ -1193,35 +1179,46 @@ class PlayerLane {
     const tFly = setTimeout(() => {
       if (!this.game.isPlaying) return;
 
-      spotlight.classList.remove('active');
+      // Read geometry once, before changing styles. Trail positions then come
+      // from the same animation's eased progress, without per-tick layout reads.
+      const currentLaneRect = this.laneEl.getBoundingClientRect();
       const bRect = balloonObj.el.getBoundingClientRect();
-      const targetX = (bRect.left - laneRect.left) + bRect.width / 2;
-      const targetY = (bRect.top - laneRect.top) + bRect.height * 0.42;
-
-      fusionBoard.classList.add('flying-to-balloon');
-      fusionBoard.style.left = `${targetX}px`;
-      fusionBoard.style.top = `${targetY}px`;
-
+      const boardRect = fusionBoard.getBoundingClientRect();
       const canvasRect = this.game.fx.canvas.getBoundingClientRect();
+      const targetX = bRect.left + bRect.width / 2;
+      const targetY = bRect.top + bRect.height * 0.42;
+      const startX = boardRect.left + boardRect.width / 2;
+      const startY = boardRect.top + boardRect.height / 2;
+      const dx = targetX - startX;
+      const dy = targetY - startY;
+
+      spotlight.classList.remove('active');
+      fusionBoard.classList.add('flying-to-balloon');
+      // Re-anchor after resize/fullscreen changes as well as during normal play.
+      fusionBoard.style.left = `${startX - currentLaneRect.left}px`;
+      fusionBoard.style.top = `${startY - currentLaneRect.top}px`;
+      const flight = fusionBoard.animate([
+        { transform: 'translate(-50%, -50%) scale(1.08)' },
+        { transform: `translate(-50%, -50%) translate3d(${dx}px, ${dy}px, 0) scale(0.62)` }
+      ], { duration: 820, easing: 'cubic-bezier(0.34, 1.15, 0.64, 1)', fill: 'forwards' });
+      this.fusionFlightAnimation = flight;
       let step = 0;
       this.fusionTrailInterval = setInterval(() => {
-        step++;
-        if (step > 5 || !this.game.isPlaying) {
+        const progress = flight.effect.getComputedTiming().progress;
+        if (++step > 5 || progress === null || !this.game.isPlaying) {
           clearInterval(this.fusionTrailInterval);
           this.fusionTrailInterval = null;
           return;
         }
-        const curRect = fusionBoard.getBoundingClientRect();
-        const tx = (curRect.left - canvasRect.left) + curRect.width / 2;
-        const ty = (curRect.top - canvasRect.top) + curRect.height / 2;
-        this.game.fx.burst(tx, ty, 5);
+        this.game.fx.burst(startX + dx * progress - canvasRect.left,
+          startY + dy * progress - canvasRect.top, 5);
       }, 120);
 
-      const tPop = setTimeout(() => {
+      flight.finished.then(() => {
+        if (!this.game.isPlaying || this.activeBalloon !== balloonObj) return;
         this.clearFusionStage();
         this.popBalloon(balloonObj);
-      }, 840);
-      this.fusionTimers.push(tPop);
+      }, () => { /* Course/home changes intentionally cancel the flight. */ });
     }, 3550);
     this.fusionTimers.push(tFly);
   }
@@ -1234,41 +1231,21 @@ class PlayerLane {
     const fillEl = is1P ? this.game.hud1PProgressFill : this.progressFill;
     const numEl = is1P ? this.game.hud1PStageScoreEl : this.stageScoreEl;
 
-    if (boxEl) {
-      boxEl.classList.remove('impact');
-      void boxEl.offsetWidth;
-      boxEl.classList.add('impact');
-    }
-    if (trackEl) {
-      trackEl.classList.remove('impact');
-      void trackEl.offsetWidth;
-      trackEl.classList.add('impact');
-    }
-    if (fillEl) {
-      fillEl.classList.remove('impact');
-      void fillEl.offsetWidth;
-      fillEl.classList.add('impact');
-    }
-    if (numEl) {
-      numEl.classList.remove('pop');
-      void numEl.offsetWidth;
-      numEl.classList.add('pop');
-    }
-
-    if (fillEl && this.game.fx) {
-      const fillRect = fillEl.getBoundingClientRect();
-      const canvasRect = this.game.fx.canvas.getBoundingClientRect();
-      const sparkX = fillRect.right - canvasRect.left;
-      const sparkY = (fillRect.top + fillRect.bottom) / 2 - canvasRect.top;
-      this.game.fx.burst(sparkX, sparkY, 16);
-    }
-
-    setTimeout(() => {
-      if (boxEl) boxEl.classList.remove('impact');
-      if (trackEl) trackEl.classList.remove('impact');
-      if (fillEl) fillEl.classList.remove('impact');
-      if (numEl) numEl.classList.remove('pop');
-    }, 800);
+    // Batch geometry reads, then start compositor-friendly animations. WAAPI
+    // restarts effects without the four forced offsetWidth layout flushes.
+    const fillRect = fillEl ? fillEl.getBoundingClientRect() : null;
+    const canvasRect = this.game.fx.canvas.getBoundingClientRect();
+    if (boxEl) boxEl.animate([
+      { transform: 'scale(1)' }, { transform: 'scale(1.025)' }, { transform: 'scale(1)' }
+    ], { duration: 650, easing: 'ease-out' });
+    [trackEl, fillEl].filter(Boolean).forEach((el) => el.animate([
+      { opacity: 1 }, { opacity: 0.65 }, { opacity: 1 }
+    ], { duration: 650, easing: 'ease-out' }));
+    if (numEl) numEl.animate([
+      { transform: 'scale(1)' }, { transform: 'scale(1.3)' }, { transform: 'scale(1)' }
+    ], { duration: 550, easing: 'ease-out' });
+    if (fillRect) this.game.fx.burst(fillRect.right - canvasRect.left,
+      (fillRect.top + fillRect.bottom) / 2 - canvasRect.top, 16);
   }
 
   popBalloon(balloonObj) {
