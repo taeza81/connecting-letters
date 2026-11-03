@@ -51,7 +51,7 @@ class ClassroomTests(unittest.TestCase):
         self.page.evaluate('''([p1,p2]) => {
             game.startModal.classList.remove('active');
             if (p2 !== null) { game.setPlayMode('2p'); game.start2PCourse(p1,p2,true); }
-            else game.startCourse(p1,true);
+            else { game.setPlayMode('1p'); game.startCourse(p1,true); }
         }''', [p1, p2])
         self.page.wait_for_timeout(500)
 
@@ -63,9 +63,44 @@ class ClassroomTests(unittest.TestCase):
         self.assertEqual(self.page.evaluate("['ㅑ','ㅕ','ㅛ','ㅠ'].map(v=>combineHangul('ㄱ',v))"), ['갸','겨','교','규'])
         self.start(11, 7)
         self.assertEqual(self.page.locator('#p1-vowel-grid button').count(), 10)
-        self.assertEqual(self.page.locator('#p2-vowel-grid button').all_text_contents(), ['ㅣ','ㅑ'])
+        self.assertEqual(self.page.locator('#p2-vowel-grid button').all_text_contents(), ['ㅏ','ㅓ','ㅗ','ㅜ','ㅡ','ㅣ','ㅑ'])
         self.assertEqual(self.page.evaluate("getComputedStyle(game.lane1.vowelGrid).gridTemplateColumns.split(' ').length"), 5)
         self.assertEqual(self.page.evaluate("getComputedStyle(game.lane1.vowelGrid).gridTemplateRows.split(' ').length"), 2)
+
+    def test_vowels_accumulate_in_order_for_both_students(self):
+        self.start(1, 1)
+        vowels = ['ㅏ','ㅓ','ㅗ','ㅜ','ㅡ','ㅣ','ㅑ','ㅕ','ㅛ','ㅠ']
+        for course in range(1, 12):
+            with self.subTest(course=course):
+                self.page.locator('#p1-course-select').select_option(str(course))
+                self.page.locator('#p2-course-select').select_option(str(12-course))
+                self.assertEqual(self.page.locator('#p1-vowel-grid button').all_text_contents(), vowels[:course])
+                self.assertEqual(self.page.locator('#p2-vowel-grid button').all_text_contents(), vowels[:12-course])
+        # Returning to an earlier course removes only the later vowels.
+        self.page.locator('#p1-course-select').select_option('3')
+        self.assertEqual(self.page.locator('#p1-vowel-grid button').all_text_contents(), vowels[:3])
+        self.assertEqual(self.page.evaluate('game.lane1.activeBalloon.target.v'), 'ㅗ')
+
+    def test_vowel_key_sizes_match_consonants_in_every_course(self):
+        for width,height in [(1024,768),(1280,800),(1920,1080)]:
+            self.page.set_viewport_size({'width':width,'height':height})
+            for mode in ['1p','2p']:
+                self.page.evaluate('(mode)=>game.setPlayMode(mode)', mode)
+                for course in range(1,12):
+                    with self.subTest(width=width,mode=mode,course=course):
+                        self.page.evaluate('(c)=>{game.lane1.setCourse(c,false);game.lane2.setCourse(c,false)}',course)
+                        self.assertTrue(self.page.evaluate("""() => {
+                            const lanes=game.playMode==='2p'?[game.lane1,game.lane2]:[game.lane1];
+                            return lanes.every(l=>{
+                                const c=l.consonantGrid.firstElementChild.getBoundingClientRect();
+                                const grid=l.vowelGrid.getBoundingClientRect();
+                                return [...l.vowelGrid.children].every(button=>{
+                                    const v=button.getBoundingClientRect();
+                                    return Math.abs(v.height-c.height)<=2 && Math.abs(v.width-c.width)<=2 &&
+                                        v.width>=32 && v.height>=32 && v.bottom<=grid.bottom+1;
+                                });
+                            });
+                        }"""))
 
     def test_independent_hints_and_mode_persistence(self):
         self.page.locator('#course-setup-2p').evaluate("el => el.style.display='block'")

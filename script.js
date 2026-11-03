@@ -647,11 +647,10 @@ class PlayerLane {
   buildVowelKeyboard() {
     this.vowelGrid.innerHTML = '';
     this.vowelButtons = {};
-    // 고정된 학습 순서에서 현재 모음과 앞서 배운 모음 최대 4개를 표시합니다.
+    // 앞서 배운 모음을 모두 누적하고, 학습 순서와 버튼 위치를 유지합니다.
     const keys = this.courseId === FINAL_COURSE_ID
       ? VOWEL_KEYS
-      : VOWEL_KEYS.slice(Math.floor((this.courseId - 1) / 5) * 5, this.courseId);
-    this.vowelGrid.classList.toggle('review-grid', this.courseId === FINAL_COURSE_ID);
+      : VOWEL_KEYS.slice(0, this.courseId);
     keys.forEach((item) => {
       const btn = document.createElement('button');
       btn.className = 'key-btn vowel-btn';
